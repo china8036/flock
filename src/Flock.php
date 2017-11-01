@@ -41,7 +41,7 @@ class Flock {
      */
     public function lock($name) {
         $encodeName = $this->encodeName($name);
-        $this->_fp[$encodeName] = fopen($this->path . DIRECTORY_SEPARATOR . $encodeName . self::FILE_EXT, 'w+');
+        $this->_fp[$encodeName] = fopen($this->getFileByEncodeName($encodeName), 'w+');
         if (flock($this->_fp[$encodeName], LOCK_EX)) {
             return true;
         }
