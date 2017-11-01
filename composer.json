@@ -1,0 +1,19 @@
+{
+    "name": "qqes/flock",
+    "description": "QQES FLOCK EXTEND",
+    "keywords": ["qqes", "flock"],
+    "type": "library",
+    "homepage": "http://www.7724.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "QQES_ZH",
+            "homepage": "http://www.7724.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Qqes\\Flock": "src/"
+        }
+    }
+}
