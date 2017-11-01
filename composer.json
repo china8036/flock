@@ -13,7 +13,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Qqes\\Flock": "src/"
+            "Qqes\\Flock\\": "src/"
         }
     }
 }
