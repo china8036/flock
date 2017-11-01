@@ -31,7 +31,7 @@ class Flock {
             throw new Exception('path not found', Exception::PATH_NOT_FOUND);
         }
         $this->path = $path;
-        register_shutdown_function($this, 'shutDown');
+        register_shutdown_function([$this, 'shutDown']);
     }
 
     /**
@@ -45,7 +45,7 @@ class Flock {
         if (flock($this->_fp[$encodeName], LOCK_EX)) {
             return true;
         }
-        $this->closeFile($encodeName);
+        $this->closeFileWithUnlock($encodeName);
         return false;
     }
 
@@ -55,8 +55,7 @@ class Flock {
      */
     public function unLock($name) {
         $encodeName = $this->encodeName($name);
-        flock($this->_fp[$encodeName], LOCK_UN);
-        $this->closeFile($encodeName); //锁定失败释放资源
+        $this->closeFileWithUnlock($encodeName); //锁定失败释放资源
     }
 
     /**
@@ -72,7 +71,8 @@ class Flock {
      * 关闭文件 包裹删除文件 等
      * @param type $encodeName
      */
-    protected function closeFile($encodeName) {
+    protected function closeFileWithUnlock($encodeName) {
+        flock($this->_fp[$encodeName], LOCK_UN);
         fclose($this->_fp[$encodeName]); //释放资源
         @unlink($this->getFileByEncodeName($encodeName));//删除文件
         unset($this->_fp[$encodeName]);//清除键值
@@ -81,13 +81,13 @@ class Flock {
     /**
      * 注册进程完毕清理方法
      */
-    protected function shutDown() {
+    public function shutDown() {
         if (empty($this->_fp)) {//为空的话 跳过处理步骤
             return;
         }
         $fpEncodeName = array_keys($this->_fp);
         foreach ($fpEncodeName as $encodeName) {//清除遗留
-            $this->closeFile($encodeName);
+            $this->closeFileWithUnlock($encodeName);
         }
     }
 
